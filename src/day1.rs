@@ -23,6 +23,7 @@ pub fn part2(input: &str) -> u32 {
             .filter_map(|s| s.trim().parse::<u32>().ok()));
     entries.iter().by_ref()
         .find_map(|x| entries.iter()
+            .filter(|y| *y <= x && (x + *y) <=2020)
             .find_map(|y| entries
                 .get(&(2020 - (x + y)))
                 .map(|z| x * y * z)
