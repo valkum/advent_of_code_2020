@@ -1,37 +1,6 @@
 use aoc_runner_derive::aoc;
 use aoc_runner_derive::aoc_generator;
-use std::iter::FromIterator;
-use std::str::FromStr;
-use anyhow::Result;
-use itertools::Itertools;
 
-#[derive(Debug,Default)]
-pub struct Seat {
-    row: u8,
-    column: u8
-}
-impl FromStr for Seat {
-    type Err = anyhow::Error;
-    
-    fn from_str(s: &str) -> Result<Self> {
-        return Ok(Seat {
-            row: s[0..=6].bytes().enumerate().fold(0u8, |acc, x| {
-                match x.1 {
-                    b'F' => {acc},
-                    b'B' => {acc | 1<<(6-x.0)},
-                    _ => unimplemented!()
-                }
-            }),
-            column: s[7..=9].bytes().enumerate().fold(0u8, |acc, x| {
-                match x.1 {
-                    b'L' => {acc},
-                    b'R' => {acc | 1<<(2-x.0)},
-                    _ => unimplemented!()
-                }
-            })
-        })
-    }
-}
 
 #[aoc_generator(day6)]
 pub fn input_generator(input: &str) -> Vec<Vec<u32>> {

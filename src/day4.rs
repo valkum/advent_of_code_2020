@@ -1,9 +1,6 @@
 use aoc_runner_derive::aoc;
 use aoc_runner_derive::aoc_generator;
-use std::collections::HashSet;
-use std::iter::FromIterator;
 use std::str::FromStr;
-use std::num::ParseIntError;
 use anyhow::Result;
 
 #[derive(Debug,Default)]
@@ -47,11 +44,10 @@ impl FromStr for Entry {
 #[aoc_generator(day4)]
 pub fn input_generator(input: &str) -> Vec<Entry> {
     let mut entries: Vec<Entry> = Vec::new();
-    let mut buf: String = String::new();
     for line in input.split("\n\n") {
         match line.replace("\n", " ").parse::<Entry>() {
         Ok(entry) => entries.push(entry),
-        Err(err) => {dbg!(err, &buf);}
+        Err(err) => {dbg!(err, &line);}
     } 
     }
     return entries
@@ -75,7 +71,7 @@ fn is_valid_hgt(input: &str) -> bool {
                 "in" => hgt >=59 && hgt <= 76,
                 _ => false
             },
-        Err(err) => false
+        Err(_err) => false
     }
 }
 fn is_valid_hcl(input: &str) -> bool {

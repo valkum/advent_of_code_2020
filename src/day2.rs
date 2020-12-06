@@ -1,6 +1,5 @@
 use aoc_runner_derive::aoc;
 use aoc_runner_derive::aoc_generator;
-use std::collections::HashSet;
 use std::iter::FromIterator;
 use std::str::FromStr;
 use std::num::ParseIntError;
