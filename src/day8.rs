@@ -2,13 +2,11 @@ use anyhow::anyhow;
 use anyhow::Result;
 use aoc_runner_derive::aoc;
 use aoc_runner_derive::aoc_generator;
-use nom::character::complete::char as nomchar;
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_while_m_n},
+    bytes::complete::tag,
     character::complete::{digit1, space1},
-    combinator::{map, map_res},
-    number::complete::{be_u8, i8},
+    combinator::map_res,
     sequence::{separated_pair, tuple},
     IResult,
 };
@@ -121,7 +119,7 @@ impl Computer {
     }
     fn step(&mut self) {
         match self.instructions[self.pc] {
-            Instruction::Nop(offset) => self.pc = self.pc + 1,
+            Instruction::Nop(_offset) => self.pc = self.pc + 1,
             Instruction::Acc(amount) => {
                 self.acc += amount as i64;
                 self.pc = self.pc + 1
@@ -179,7 +177,6 @@ acc +1
 jmp -4
 acc +6";
 
-    const SAMPLE2: &str = "";
     #[test]
     fn sample1() {
         let input = input_generator(&SAMPLE);
