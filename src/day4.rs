@@ -1,9 +1,9 @@
+use anyhow::Result;
 use aoc_runner_derive::aoc;
 use aoc_runner_derive::aoc_generator;
 use std::str::FromStr;
-use anyhow::Result;
 
-#[derive(Debug,Default)]
+#[derive(Debug, Default)]
 pub struct Entry {
     byr: Option<usize>,
     iyr: Option<usize>,
@@ -12,32 +12,30 @@ pub struct Entry {
     hcl: Option<String>,
     ecl: Option<String>,
     pid: Option<String>,
-    cid: Option<usize>
+    cid: Option<usize>,
 }
-
-
 
 impl FromStr for Entry {
     type Err = anyhow::Error;
-    
+
     fn from_str(s: &str) -> Result<Self> {
         let params: Vec<&str> = s.split(" ").collect();
         let mut build = Entry::default();
         for param in params {
             let part: Vec<&str> = param.split(":").collect();
             match part[0] {
-                "byr" => {build.byr = Some(part[1].parse::<usize>()?)},
-                "iyr" => {build.iyr = Some(part[1].parse::<usize>()?)},
-                "eyr" => {build.eyr = Some(part[1].parse::<usize>()?)},
-                "hgt" => {build.hgt = Some(part[1].to_owned())},
-                "hcl" => {build.hcl = Some(part[1].to_owned())},
-                "ecl" => {build.ecl = Some(part[1].to_owned())},
-                "pid" => {build.pid = Some(part[1].to_owned())},
-                "cid" => {build.cid = Some(part[1].parse::<usize>()?)},
+                "byr" => build.byr = Some(part[1].parse::<usize>()?),
+                "iyr" => build.iyr = Some(part[1].parse::<usize>()?),
+                "eyr" => build.eyr = Some(part[1].parse::<usize>()?),
+                "hgt" => build.hgt = Some(part[1].to_owned()),
+                "hcl" => build.hcl = Some(part[1].to_owned()),
+                "ecl" => build.ecl = Some(part[1].to_owned()),
+                "pid" => build.pid = Some(part[1].to_owned()),
+                "cid" => build.cid = Some(part[1].parse::<usize>()?),
                 _ => unimplemented!(),
             }
         }
-        return Ok(build)
+        return Ok(build);
     }
 }
 
@@ -46,70 +44,97 @@ pub fn input_generator(input: &str) -> Vec<Entry> {
     let mut entries: Vec<Entry> = Vec::new();
     for line in input.split("\n\n") {
         match line.replace("\n", " ").parse::<Entry>() {
-        Ok(entry) => entries.push(entry),
-        Err(err) => {dbg!(err, &line);}
-    } 
+            Ok(entry) => entries.push(entry),
+            Err(err) => {
+                dbg!(err, &line);
+            }
+        }
     }
-    return entries
+    return entries;
 }
 
 #[aoc(day4, part1)]
 pub fn part1(input: &[Entry]) -> usize {
-    input.iter().filter_map(|e| {
-        if e.byr.is_some() && e.iyr.is_some() && e.eyr.is_some() && e.hgt.is_some() && e.hcl.is_some() && e.ecl.is_some() && e.pid.is_some() {
-            Some(e)
-        } else {
-            None
-        }
-    }).count()
+    input
+        .iter()
+        .filter_map(|e| {
+            if e.byr.is_some()
+                && e.iyr.is_some()
+                && e.eyr.is_some()
+                && e.hgt.is_some()
+                && e.hcl.is_some()
+                && e.ecl.is_some()
+                && e.pid.is_some()
+            {
+                Some(e)
+            } else {
+                None
+            }
+        })
+        .count()
 }
 fn is_valid_hgt(input: &str) -> bool {
-    match input[0..input.len()-2].parse::<usize>() {
-        Ok(hgt) => 
-            match input[input.len()-2..input.len()].as_ref() {
-                "cm" => hgt >=150 && hgt <= 193,
-                "in" => hgt >=59 && hgt <= 76,
-                _ => false
-            },
-        Err(_err) => false
+    match input[0..input.len() - 2].parse::<usize>() {
+        Ok(hgt) => match input[input.len() - 2..input.len()].as_ref() {
+            "cm" => hgt >= 150 && hgt <= 193,
+            "in" => hgt >= 59 && hgt <= 76,
+            _ => false,
+        },
+        Err(_err) => false,
     }
 }
 fn is_valid_hcl(input: &str) -> bool {
-    return input.starts_with("#") && input[1..input.len()].bytes().all(|b| (b >= b'0' && b <= b'9') || (b >= b'a' && b <= b'f'))
+    return input.starts_with("#")
+        && input[1..input.len()]
+            .bytes()
+            .all(|b| (b >= b'0' && b <= b'9') || (b >= b'a' && b <= b'f'));
 }
 fn is_valid_ecl(input: &str) -> bool {
     match input {
-        "amb" | "blu"| "brn" | "gry" | "grn" | "hzl" | "oth" => true,
-        _ => false
+        "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => true,
+        _ => false,
     }
 }
 fn is_valid_pid(input: &str) -> bool {
-    return input.len() == 9 && input.bytes().all(|b| b >= b'0' && b <= b'9')
+    return input.len() == 9 && input.bytes().all(|b| b >= b'0' && b <= b'9');
 }
 
 #[aoc(day4, part2)]
 pub fn part2(input: &[Entry]) -> usize {
-    input.iter().filter_map(|e| {
-        if e.byr.is_some() && e.iyr.is_some() && e.eyr.is_some() && e.hgt.is_some() && e.hcl.is_some() && e.ecl.is_some() && e.pid.is_some() && 
-         e.byr.unwrap() >= 1920 && e.byr.unwrap() <= 2002 &&
-         e.iyr.unwrap() >= 2010 && e.iyr.unwrap() <= 2020 &&
-         e.eyr.unwrap() >= 2020 && e.eyr.unwrap() <= 2030 &&
-         is_valid_hgt(e.hgt.as_ref().unwrap()) && 
-         is_valid_hcl(e.hcl.as_ref().unwrap()) && 
-         is_valid_ecl(e.ecl.as_ref().unwrap()) && 
-         is_valid_pid(e.pid.as_ref().unwrap()) {
-            Some(e)
-        } else {
-            None
-        }
-    }).count()
+    input
+        .iter()
+        .filter_map(|e| {
+            if e.byr.is_some()
+                && e.iyr.is_some()
+                && e.eyr.is_some()
+                && e.hgt.is_some()
+                && e.hcl.is_some()
+                && e.ecl.is_some()
+                && e.pid.is_some()
+                && e.byr.unwrap() >= 1920
+                && e.byr.unwrap() <= 2002
+                && e.iyr.unwrap() >= 2010
+                && e.iyr.unwrap() <= 2020
+                && e.eyr.unwrap() >= 2020
+                && e.eyr.unwrap() <= 2030
+                && is_valid_hgt(e.hgt.as_ref().unwrap())
+                && is_valid_hcl(e.hcl.as_ref().unwrap())
+                && is_valid_ecl(e.ecl.as_ref().unwrap())
+                && is_valid_pid(e.pid.as_ref().unwrap())
+            {
+                Some(e)
+            } else {
+                None
+            }
+        })
+        .count()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{part1, part2, input_generator};
+    use super::{input_generator, part1, part2};
 
-    const SAMPLE: &str= "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+    const SAMPLE: &str = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm
 
 iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
@@ -136,7 +161,7 @@ hgt:59cm ecl:zzz
 eyr:2038 hcl:74454a iyr:2023
 pid:3556412378 byr:2007";
 
-const SAMPLE_VALID: &str = "pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
+    const SAMPLE_VALID: &str = "pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
 hcl:#623a2f
 
 eyr:2029 ecl:blu cid:129 byr:1989
