@@ -4,13 +4,16 @@ use aoc_runner_derive::aoc_generator;
 
 #[aoc_generator(day10)]
 pub fn input_generator(input: &str) -> Vec<u64> {
-    input.lines().map(|x| x.parse::<u64>().unwrap()).collect()
-}
-
-fn find_part1(input: &Vec<u64>) -> Result<Vec<u64>> {
-    let mut input = input.clone();
+    let mut input: Vec<u64> = input.lines().map(|x| x.parse::<u64>().unwrap()).collect();
     input.push(0);
     input.sort();
+    input.push(input.last().unwrap() + 3);
+    input
+}
+
+
+#[aoc(day10, part1)]
+pub fn part1(input: &Vec<u64>) -> u64 {
     let mut differences = vec![0u64; 3];
     // dbg!(&input);
     input.windows(2).for_each(|x| {
@@ -22,15 +25,11 @@ fn find_part1(input: &Vec<u64>) -> Result<Vec<u64>> {
             .checked_add(1)
             .unwrap()
     });
-    differences[2] += 1;
-    Ok(differences)
+    differences[0] * differences[2]
 }
 
-fn find_part2(input: &Vec<u64>) -> u64 {
-    let mut input = input.clone();
-    input.push(0);
-    input.sort();
-    input.push(input.last().unwrap() + 3);
+#[aoc(day10, part2)]
+pub fn part2(input: &Vec<u64>) -> u64 {
     let mut i = input.len() - 1;
     let mut arrangements: Vec<u64> = vec![0; input.len()];
     arrangements[input.len() - 1] = 1;
@@ -58,7 +57,7 @@ fn find_part2(input: &Vec<u64>) -> u64 {
             (1, _, _) | (2, _, _) | (3, _, _) => arrangements[i] = arrangements[i + 1],
             _ => panic!("missing pattern {:?}", z),
         };
-        // dbg!(&z, &arrangements);
+
         if i == 0 {
             break;
         }
@@ -128,24 +127,24 @@ mod tests {
     #[test]
     fn sample1() {
         let input = input_generator(&SAMPLE);
-        let result = find_part1(&input).expect("finde part1 failed");
-        assert_eq!(result, vec![7, 0, 5]);
+        let result = part1(&input);
+        assert_eq!(result, 35);
 
         let input = input_generator(&SAMPLE2);
-        let result = find_part1(&input).expect("finde part1 failed");
-        assert_eq!(result, vec![22, 0, 10]);
+        let result = part1(&input);
+        assert_eq!(result, 220);
     }
 
     #[test]
     fn sample2_1() {
         let input = input_generator(&SAMPLE);
-        let result = find_part2(&input);
+        let result = part2(&input);
         assert_eq!(result, 8);
     }
     #[test]
     fn sample2_2() {
         let input = input_generator(&SAMPLE2);
-        let result = find_part2(&input);
+        let result = part2(&input);
         assert_eq!(result, 19208);
     }
 }
