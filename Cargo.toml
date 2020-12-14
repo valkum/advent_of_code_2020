@@ -22,3 +22,5 @@ string-interner = "0.12.1"
 nom = "6.0.1"
 lazy_static = "1.4.0"
 rayon = "1.5"
+
+num-integer = "0.1.44"
