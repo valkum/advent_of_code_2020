@@ -51,6 +51,21 @@ pub fn part2(input: &Input) -> i64 {
     }).sum::<i64>().rem_euclid(N)
 }
 
+#[aoc(day13, part2, constructive)]
+#[allow(non_snake_case)]
+pub fn part2_constructive(input: &Input) -> i64 {
+
+    let mut iter = input.busses.iter().enumerate().filter(|(_,bus)| bus.is_some()).map(|(i, bus)| (-(i as i64).rem_euclid(bus.unwrap() as i64), bus.unwrap() as i64));
+
+    let mut acc = iter.next().unwrap();
+    for cur in iter {
+        let bezout = acc.1.extended_gcd(&cur.1);
+        acc = ((acc.0*bezout.y*cur.1 + cur.0*bezout.x*acc.1).rem_euclid(acc.1*cur.1), acc.1*cur.1)
+    }
+
+    acc.0.rem_euclid(acc.1)
+}
+
 #[cfg(test)]
 mod tests {
     use super::{*};
@@ -71,13 +86,16 @@ mod tests {
     #[test]
     fn sample2_1() {
         assert_eq!(part2(&input_generator(&SAMPLE)), 1068781);
+        assert_eq!(part2_constructive(&input_generator(&SAMPLE)), 1068781);
     }
     #[test]
     fn sample2_2() {
         assert_eq!(part2(&input_generator(&SAMPLE2)), 3417);
+        assert_eq!(part2_constructive(&input_generator(&SAMPLE2)), 3417);
     }
     #[test]
     fn sample2_3() {
         assert_eq!(part2(&input_generator(&SAMPLE3)), 754018);
+        assert_eq!(part2_constructive(&input_generator(&SAMPLE3)), 754018);
     }
 }
